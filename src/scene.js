@@ -12,7 +12,7 @@ export class Scene {
     this.count=0;
 
     if(this.e.mobile===true){
-      this.zoomScale = 1;
+      this.zoomScale = 2.5;
     }else{
       this.zoomScale = 3;
     }
@@ -816,7 +816,6 @@ export class Scene {
       
       this.e.s.p("select")
 
-      // this.musicLoop = new Howl({src: ['./src/sounds/loopAmbient.mp3'], volume:1, loop:true});
       this.e.s.musicLoop.loop = true;
       this.e.s.musicLoop.play();
       this.musicLoopVolume = 0;
@@ -825,11 +824,12 @@ export class Scene {
 
     }else if(this.action==="game"){
 
-      if(this.musicLoopVolume <= 1){
+      if(this.musicLoopVolume < 1 && this.e.musicOn===true){
         this.musicLoopVolume += this.e.dt*.4;
       }
 
       this.e.s.musicLoop.volume(this.musicLoopVolume);
+      console.log(this.musicLoopVolume)
 
       this.hand2.alpha=1;
 

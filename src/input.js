@@ -139,7 +139,7 @@ export class Input {
 
                 if(i===0){
 
-                    this.maxStick = 12
+                    this.maxStick = 12*2.5
 
                     this.stickMoveX = -(this.ongoingTouches[0].clientX - evt.touches[i].clientX);
                     if(this.stickMoveX > this.maxStick){
@@ -168,15 +168,15 @@ export class Input {
 
             var distPerc = this.e.u.getDistance(evt.touches[0].clientX, evt.touches[0].clientY, this.ongoingTouches[0].clientX, this.ongoingTouches[0].clientY);
             
-            if(distPerc>12){
-                distPerc=12;
+            if(distPerc>12*2.5){
+                distPerc=12*2.5;
             }
 
             this.stickMoveX2 = (distPerc * Math.cos(angleRadians));
             this.stickMoveY2 = (distPerc * Math.sin(angleRadians));
             
-            this.speedMultX = this.stickMoveX2/12;
-            this.speedMultY = this.stickMoveY2/12;
+            this.speedMultX = this.stickMoveX2/(12*2.5);
+            this.speedMultY = this.stickMoveY2/(12*2.5);
 
 
         });
@@ -223,7 +223,20 @@ export class Input {
 
     }
 
-    update(){
+    update(){  
+
+        if(this.e.mobile===true){
+
+            this.stickIn.style.width =  this.stickIn.style.height = 100*2.5+"px";
+            this.stickOut.style.width =  this.stickOut.style.height = 100*2.5+"px";
+
+            this.stickWidth = 50*2.5;
+
+        }else{
+
+            this.stickWidth = 50;
+
+        }
 
         if(this.stickMoveX2===undefined && this.stickMoveY2===undefined){
 
@@ -232,11 +245,11 @@ export class Input {
 
         }else if(this.ongoingTouches.length>0){
 
-            this.stickIn.style.left = (this.ongoingTouches[0].clientX-50+this.stickMoveX2)+"px";
-            this.stickIn.style.top = (this.ongoingTouches[0].clientY-50+this.stickMoveY2)+"px";
+            this.stickIn.style.left = (this.ongoingTouches[0].clientX-this.stickWidth+this.stickMoveX2)+"px";
+            this.stickIn.style.top = (this.ongoingTouches[0].clientY-this.stickWidth+this.stickMoveY2)+"px";
 
-            this.stickOut.style.left = (this.ongoingTouches[0].clientX-50)+"px";
-            this.stickOut.style.top = (this.ongoingTouches[0].clientY-50)+"px";
+            this.stickOut.style.left = (this.ongoingTouches[0].clientX-this.stickWidth)+"px";
+            this.stickOut.style.top = (this.ongoingTouches[0].clientY-this.stickWidth)+"px";
 
             this.stickIn.style.opacity = .35;
             this.stickOut.style.opacity = .35;

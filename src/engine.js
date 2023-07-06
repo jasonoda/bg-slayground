@@ -23,6 +23,9 @@ export class Engine {
         this.touch = new Object;
         this.touch.x=0;
         this.touch.y=0;
+
+        this.soundOn=true;
+        this.musicOn=true;
          
         this.mobile = false;
         if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test( navigator.userAgent ) ) {

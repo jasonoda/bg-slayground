@@ -15,19 +15,24 @@ export class UI {
             view: this.uiCanvas,
             width: window.innerWidth, 
             height: window.innerHeight,
+            antialias: false,
+            powerPreference: "high-performance",
             transparent: true,
-			resolution: window.devicePixelRatio,
+            autoDensity: true,
 			appDensity: true
         });
 
         window.addEventListener('resize', (event) => {
             this.app.renderer.resize(window.innerWidth, window.innerHeight);
+            console.log("resize")
+            // app.renderer.resize(app.screen.width * app.renderer.resolution, app.screen.height * app.renderer.resolution);
         });
         // PIXI.BaseTexture.SCALE_MODE.NEAREST;
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-        PIXI.settings.RESOLUTION = window.devicePixelRatio;
+        // PIXI.settings.RESOLUTION = window.devicePixelRatio;
 
         this.app.renderer.plugins.interaction.mouseOverRenderer = true;
+        this.app.renderer.resolution = 1;
 
         this.animatedSprites = [];
 
@@ -317,7 +322,12 @@ export class UI {
         ['bushSmall3', './src/img/bushSmall3.png'],
         ['tinyBush1', './src/img/tinyBush1.png'],
         ['tinyBush2', './src/img/tinyBush2.png'],
-        ['tinyBush3', './src/img/tinyBush3.png']
+        ['tinyBush3', './src/img/tinyBush3.png'],
+
+        ['musicButton', './src/img/musicButton.png'],
+        ['musicButtonOff', './src/img/musicButtonOff.png'],
+        ['soundButton', './src/img/soundButton.png'],
+        ['soundButtonOff', './src/img/soundButtonOff.png']
 
         ];
 
@@ -615,6 +625,11 @@ export class UI {
             this.t_tinyBush2=textures.tinyBush2;
             this.t_tinyBush3=textures.tinyBush3;
 
+            this.t_musicButton=textures.musicButton;
+            this.t_soundButton=textures.soundButton;
+            this.t_musicButtonOff=textures.musicButtonOff;
+            this.t_soundButtonOff=textures.soundButtonOff;
+
             this.stanceAni_d = [this.t_stance_d1,this.t_stance_d2,this.t_stance_d3,this.t_stance_d2];
             this.stanceAni_u = [this.t_stance_u1,this.t_stance_u2,this.t_stance_u3,this.t_stance_u2];
             this.stanceAni_s = [this.t_stance_s1,this.t_stance_s2,this.t_stance_s3,this.t_stance_s2];
@@ -705,6 +720,68 @@ export class UI {
         // this.vig2._zIndex=81
         // this.vig2.alpha=1;
         // this.mainCont.addChild(this.vig2);
+
+        //--------------------------------------------------------------------
+
+        this.musicButton = new PIXI.Sprite(this.t_musicButton);
+        this.musicButton.scale.x = this.musicButton.scale.y = 2;
+        this.musicButton._zIndex = 10000
+        this.musicButton.interactive = true;
+        this.musicButton.buttonMode = true;
+        this.mainCont.addChild(this.musicButton);
+
+        this.musicButton.on('mousedown', (event) => {
+            if(this.e.musicOn===true){
+                this.e.scene.musicLoopVolume=0;
+                this.e.musicOn=false;
+                this.musicButton.texture = this.t_musicButtonOff;
+            }else{
+                console.log("back to on")
+                this.e.scene.musicLoopVolume=1;
+                this.e.musicOn=true;
+                this.musicButton.texture = this.t_musicButton;
+            }
+        })
+
+        this.musicButton.on('touchstart', (event) => {
+            if(this.e.musicOn===true){
+                this.e.scene.musicLoopVolume=0;
+                this.e.musicOn=false;
+                this.musicButton.texture = this.t_musicButtonOff;
+            }else{
+                console.log("back to on")
+                this.e.scene.musicLoopVolume=1;
+                this.e.musicOn=true;
+                this.musicButton.texture = this.t_musicButton;
+            }
+        })
+
+        this.soundButton = new PIXI.Sprite(this.t_soundButton);
+        this.soundButton.scale.x = this.soundButton.scale.y = 2;
+        this.soundButton._zIndex = 10000
+        this.soundButton.interactive = true;
+        this.soundButton.buttonMode = true;
+        this.mainCont.addChild(this.soundButton);
+
+        this.soundButton.on('mousedown', (event) => {
+            if(this.e.soundOn===true){
+                this.e.soundOn=false;
+                this.soundButton.texture = this.t_soundButtonOff;
+            }else{
+                this.e.soundOn=true;
+                this.soundButton.texture = this.t_soundButton;
+            }
+        })
+
+        this.soundButton.on('touchstart', (event) => {
+            if(this.e.soundOn===true){
+                this.e.soundOn=false;
+                this.soundButton.texture = this.t_soundButtonOff;
+            }else{
+                this.e.soundOn=true;
+                this.soundButton.texture = this.t_soundButton;
+            }
+        })
 
         //--------------------------------------------------------------------
 
@@ -1294,10 +1371,16 @@ export class UI {
 
         this.animate();
 
+        // this.app.renderer.resolution = window.devicePixelRatio;
+
+        console.log(window.devicePixelRatio)
+
         if(this.scoreText!==null && this.scoreText!==undefined){
 
-            this.instructions.position.x = window.innerWidth/2;
-            this.instructions.position.y = window.innerHeight/2;
+            // this.app.renderer.resize(this.app.screen.width * this.app.renderer.resolution, this.app.screen.height * this.app.renderer.resolution);
+
+            this.instructions.position.x = Math.round(window.innerWidth/2);
+            this.instructions.position.y = Math.round(window.innerHeight/2);
     
             this.powerCont.position.x = window.innerWidth/2;
             this.powerCont.position.y = (window.innerHeight/2);
@@ -1311,6 +1394,14 @@ export class UI {
             this.vig.width = window.innerWidth;
             this.vig.height = window.innerHeight;
 
+            this.soundButton.position.x = window.innerWidth - 40;
+            this.soundButton.position.y = window.innerHeight - 40;
+            this.soundButton.scale.x = this.soundButton.scale.y = 2;
+
+            this.musicButton.position.x = window.innerWidth - 75;
+            this.musicButton.position.y = window.innerHeight - 40;
+            this.musicButton.scale.x = this.musicButton.scale.y = 2;
+
             this.rightCont.position.x = window.innerWidth;
             this.botCont.position.x = 100;
             this.botCont.position.y = window.innerHeight;
@@ -1319,14 +1410,22 @@ export class UI {
             this.deathCont.position.y = Math.round((window.innerHeight/2)+this.e.scene.t.deathOffset);
 
             if(this.e.mobile===true){
-                this.leftCont.scale.x = this.leftCont.scale.y = 1
-                this.rightCont.scale.x = this.rightCont.scale.y = 1
-                this.lifeCont.scale.x = this.lifeCont.scale.y = .5
-                this.powerCont.scale.x = this.powerCont.scale.y = .5
-                this.botCont.scale.x = this.botCont.scale.y = 1
+                this.soundButton.position.x = Math.round(window.innerWidth - 40*2.5);
+                this.soundButton.position.y = Math.round(window.innerHeight - 40*2.5);
+                this.soundButton.scale.x = this.soundButton.scale.y = 5;
+
+                this.musicButton.position.x = Math.round(window.innerWidth - 75*2.5);
+                this.musicButton.position.y = Math.round(window.innerHeight - 40*2.5);
+                this.musicButton.scale.x = this.musicButton.scale.y = 5;
+                this.leftCont.scale.x = this.leftCont.scale.y = 2.5
+                this.rightCont.scale.x = this.rightCont.scale.y = 2.5
+                this.lifeCont.scale.x = this.lifeCont.scale.y = 1.25
+                this.powerCont.scale.x = this.powerCont.scale.y = 1.25
+                this.botCont.scale.x = this.botCont.scale.y = 2.5
                 this.botCont.position.x = 10;
-                this.instructions.scale.x = this.instructions.scale.y = 1
-                this.lifeCont.position.y = 55;
+                this.instructions.scale.x = this.instructions.scale.y = 2.5
+                this.lifeCont.position.y = 55*2.5;
+                this.deathCont.scale.x = this.deathCont.scale.y = 2.5
             }
             
         }
@@ -1375,7 +1474,7 @@ export class UI {
                     a.ani = [];
                 }
 
-                a.aniCount += this.e.dt;
+                a.aniCount += this.e.dt
 
                 if (a.aniCount > a.aniSpeed) {
 

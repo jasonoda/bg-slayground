@@ -43,17 +43,19 @@ export class Sounds {
 
     p(type){
 
-        for(var i=0; i<this.loadedSounds.length; i++){
+        if(this.e.soundOn===true){
+            
+            for(var i=0; i<this.loadedSounds.length; i++){
 
-            // console.log(type+" / "+this.loadedSounds[i].name)
+                if(this.loadedSounds[i].name===type){
 
-            if(this.loadedSounds[i].name===type){
-
-                // console.log("-->"+type)
-                this.loadedSounds[i].play();
+                    // console.log("-->"+type)
+                    this.loadedSounds[i].play();
+                    
+                }
                 
             }
-            
+    
         }
 
     }
