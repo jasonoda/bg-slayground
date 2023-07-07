@@ -70,6 +70,9 @@ export class Scene {
     this.saveLevel = 1;
     this.showLevCount = 0;
 
+    this.hasWon = false;
+    this.wonCount = 0;
+
     this.disableAttacks=false;
 
   }
@@ -835,6 +838,24 @@ export class Scene {
 
       // console.log(this.mainCont.position.x+" / "+this.mainCont.position.y)
 
+      if(this.gameTime>300){
+        this.hasWon=true;
+        this.e.ui.winText.alpha=1;
+        if(this.wonCount===0){
+          for(var i=0; i<this.enemies.length; i++){
+            this.enemies[i].life=0;
+          }
+        }
+        this.wonCount+=this.e.dt;
+        if(this.wonCount>3){
+          this.action="win start"
+        }
+      }
+
+      if(this.gameTime>300){
+        this.gameTime=300;
+      }
+
       if(this.pause===false){
           
         var lerpx = Math.round(window.innerWidth/2) + (this.playerCont.position.x*-this.zoomScale);
@@ -1201,6 +1222,12 @@ export class Scene {
 
       for (var i = 0; i < this.enemies.length; i++) {
         this.enemies[i].phys.isStatic = true;
+
+        var enDist = this.e.u.getDistance(this.playerCont.position.x, this.playerCont.position.y, this.enemies[i].enCont.position.x, this.enemies[i].enCont.position.y);
+        
+        if(enDist<100){
+          this.enemies[i].life=0;
+        }
       }
 
       //-------------------------------------------
@@ -1617,6 +1644,21 @@ export class Scene {
       this.coinAmount = 0;
       this.action="game"
 
+    }else if(this.action==="win start"){
+
+      // this.e.s.p("deathSong")
+      this.musicLoopVolume = 0;
+      this.e.s.musicLoop.volume(this.musicLoopVolume);
+
+      this.playerCont.alpha=0;
+      this.e.ui.playerDeath.ani = this.e.ui.wonAni;
+      this.e.ui.playerDeath.alpha=1;
+      
+      gsap.to(  this.e.ui.death, {alpha: 1,  duration: 2, ease: "linear"});
+
+      this.count=0;
+      this.action="death"
+
     }else if(this.action==="death start"){
 
       this.e.s.p("deathSong")
@@ -1635,8 +1677,12 @@ export class Scene {
       this.count+=this.e.dt;
       if(this.count>3){
         this.count=0;
-        this.e.ui.playerDeath.ani = this.e.ui.deathAni2;
-        this.e.s.p("hurt")
+        if(this.hasWon===true){
+          this.e.ui.playerDeath.ani = this.e.ui.wonAni;
+        }else{
+          this.e.ui.playerDeath.ani = this.e.ui.deathAni2;
+          this.e.s.p("hurt")
+        }
         this.action="death move"
       }
 
@@ -1668,6 +1714,35 @@ export class Scene {
 
       this.count+=this.e.dt;
       if(this.count>2){
+        this.count=0;
+        this.action="tally0"
+      }
+
+    }else if(this.action==="tally0"){
+
+      var meterLength = (372*this.gameTime)/300;
+
+      gsap.to(  this.e.ui.meterBack, {width: meterLength, duration: 2, ease: "sine.out"});
+      this.action="tally0 wait"
+
+    }else if(this.action==="tally0 wait"){
+
+      this.count+=this.e.dt;
+      if(this.count>2){
+        this.count=0;
+        this.action="tally s wait0"
+      }
+
+      this.tCount+=this.e.dt;
+      if(this.tCount>.1){
+        this.tCount=0;
+        this.e.s.p("tallyRight")
+      }
+
+    }else if(this.action==="tally s wait0"){
+
+      this.count+=this.e.dt;
+      if(this.count>1){
         this.count=0;
         this.action="tally1"
       }
@@ -1971,7 +2046,7 @@ export class Scene {
         }
 
         eb.totalTime+=this.e.dt;
-        if(eb.totalTime>8){
+        if(eb.totalTime>8 || this.hasWon===true){
           eb.totalTime=0;
             
           eb.position.x = 10000;
@@ -2130,7 +2205,7 @@ export class Scene {
 
     if(this.enemiesAttacking<this.maxEnemies){
       
-      if(this.disableAttacks===false){
+      if(this.disableAttacks===false && this.hasWon===false){
         this.enemyCount+=this.e.dt * this.masterSpeed;
       }
       if(this.enemyCount>this.enemyLim && this.onlyOneEnemy===undefined || this.onlyOneEnemy===0){
@@ -4232,7 +4307,7 @@ export class Scene {
     
     // var lm = 1
 
-    if(this.coinAmount>=this.levCoinAmount && this.playerLevel<20){
+    if(this.coinAmount>=this.levCoinAmount && this.playerLevel<20 && this.hasWon===false){
 
       this.action="power up start"
 

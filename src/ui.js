@@ -273,6 +273,8 @@ export class UI {
 
         ['stance_sb1', './src/img/player/stance_sb1.png'],
 
+        ['won', './src/img/player/won.png'],
+
         ['run_d1', './src/img/player/run_d1.png'],
         ['run_d2', './src/img/player/run_d2.png'],
         ['run_d3', './src/img/player/run_d3.png'],
@@ -327,7 +329,10 @@ export class UI {
         ['musicButton', './src/img/musicButton.png'],
         ['musicButtonOff', './src/img/musicButtonOff.png'],
         ['soundButton', './src/img/soundButton.png'],
-        ['soundButtonOff', './src/img/soundButtonOff.png']
+        ['soundButtonOff', './src/img/soundButtonOff.png'],
+
+        ['endMeter', './src/img/endMeter.png'],
+        ['purple', './src/img/purple.png']
 
         ];
 
@@ -604,6 +609,7 @@ export class UI {
             this.t_arm_4=textures.arm_4;
             this.t_arm_5=textures.arm_5;
 
+            this.t_won=textures.won;
             this.t_death=textures.death;
 
             this.t_fuse1=textures.fuse1;
@@ -630,6 +636,9 @@ export class UI {
             this.t_musicButtonOff=textures.musicButtonOff;
             this.t_soundButtonOff=textures.soundButtonOff;
 
+            this.t_endMeter=textures.endMeter;
+            this.t_purple=textures.purple;
+
             this.stanceAni_d = [this.t_stance_d1,this.t_stance_d2,this.t_stance_d3,this.t_stance_d2];
             this.stanceAni_u = [this.t_stance_u1,this.t_stance_u2,this.t_stance_u3,this.t_stance_u2];
             this.stanceAni_s = [this.t_stance_s1,this.t_stance_s2,this.t_stance_s3,this.t_stance_s2];
@@ -647,6 +656,7 @@ export class UI {
 
             this.deathAni = [this.t_stance_d1,this.t_stance_s1,this.t_stance_u1,this.t_stance_sb1];
             this.deathAni2 = [this.t_death];
+            this.wonAni = [this.t_won];
 
             this.bombWait = [this.t_bomb];
             this.bombFlash = [this.t_bomb,this.t_bomb2];
@@ -783,6 +793,21 @@ export class UI {
             }
         })
 
+        this.winText = new PIXI.Text('YOU SURVIVED!');
+        this.winText.anchor.x=0.5
+        this.winText.position.y = -320;
+        this.winText._zIndex = 215;
+        this.winText.style = new PIXI.TextStyle({
+            align: "center",
+            lineHeight: 0,
+            fill: 0xe7ce78,
+            fontSize: 36,
+            fontFamily: "Ambitsek"
+        })
+        this.winText.resolution = 3;
+        this.winText.alpha = 0;
+        this.mainCont.addChild(this.winText);
+        
         //--------------------------------------------------------------------
 
         this.deathCont = new PIXI.Container();
@@ -801,7 +826,7 @@ export class UI {
 
         this.playerDeath = new PIXI.Sprite(this.t_player);
         this.playerDeath.anchor.x=0.5
-        this.playerDeath.anchor.y=0.5
+        this.playerDeath.anchor.y=1
         this.playerDeath.scale.x=this.playerDeath.scale.y=3
         this.playerDeath._zIndex=80
         this.playerDeath.alpha=0;
@@ -816,6 +841,27 @@ export class UI {
         this.deathCont.addChild(this.scoreCont);
         this.scoreCont.zIndex = 45000;
         this.scoreCont.alpha=0;
+
+        this.endMeter = new PIXI.Sprite(this.t_endMeter);
+        this.endMeter.anchor.x=0.5
+        this.endMeter.anchor.y=0.5
+        this.endMeter.position.x=10
+        this.endMeter.position.y=-370
+        this.endMeter.scale.x=this.endMeter.scale.y=2
+        this.endMeter._zIndex=80
+        // this.endMeter.alpha=0;
+        this.scoreCont.addChild(this.endMeter);
+
+        this.meterBack = new PIXI.Sprite(this.t_purple);
+        this.meterBack.anchor.x=0
+        this.meterBack.anchor.y=0.5
+        this.meterBack.position.x=-190
+        this.meterBack.position.y=-378
+        this.meterBack.height = 16;
+        this.meterBack.width = 0;
+        // this.meterBack.alpha = 0;
+        this.meterBack._zIndex=70
+        this.scoreCont.addChild(this.meterBack);
 
         this.finalScoreText = new PIXI.Text('FINAL SCORE');
         this.finalScoreText.anchor.x=0.5
@@ -1373,12 +1419,15 @@ export class UI {
 
         // this.app.renderer.resolution = window.devicePixelRatio;
 
-        console.log(window.devicePixelRatio)
+        // console.log(window.devicePixelRatio)
 
         if(this.scoreText!==null && this.scoreText!==undefined){
 
             // this.app.renderer.resize(this.app.screen.width * this.app.renderer.resolution, this.app.screen.height * this.app.renderer.resolution);
 
+            this.winText.position.x = Math.round(window.innerWidth/2);
+            this.winText.position.y = Math.round(window.innerHeight/2)-200;
+    
             this.instructions.position.x = Math.round(window.innerWidth/2);
             this.instructions.position.y = Math.round(window.innerHeight/2);
     

@@ -50,7 +50,7 @@ export class Input {
 
             } else if (event.key === "8") {
 
-                this.e.scene.shotNumber = 5;
+                this.e.scene.gameTime = 297;
 
             } else if (event.key === "9") {
 
